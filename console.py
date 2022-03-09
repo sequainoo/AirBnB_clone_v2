@@ -2,6 +2,8 @@
 """ Console Module """
 import cmd
 import sys
+import uuid
+from datetime import datetime
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -140,26 +142,33 @@ class HBNBCommand(cmd.Cmd):
                 if not hasattr(_class, key) or not value:
                     continue
                 if value[0] == '"' and value[-1] == '"':  # is string
-                    if type(_class__dict__[key]) is not str:
+                    if type(_class.__dict__[key]) is not str:
                         continue
                     value = value.strip('"').replace('_', ' ')
                     value = value.replace('"', '\"')
                 elif '.' in value:  # value is a float
-                    if type(_class__dict__[key]) is not float:
+                    if type(_class.__dict__[key]) is not float:
                         continue
                     try:
                         value = float(value)
                     except ValueError:
                         continue
                 else:  # value is an int
-                    if type(_class__dict__[key]) is not int:
+                    if type(_class.__dict__[key]) is not int:
                         continue
                     try:
                         value = int(value)
                     except ValueError:
                         continue
                 kwargs.update({key: value})
-            new_instance = _class(kwargs)
+                print('Args ----- \n', kwargs)
+            kwargs.update({
+                'id': str(uuid.uuid4()),
+                'updated_at': datetime.now().isoformat(),
+                'created_at': datetime.now().isoformat(),
+                '__class__': _class.__name__
+            })
+            new_instance = _class(**kwargs)
         storage.save()
         print(new_instance.id)
         storage.save()
