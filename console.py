@@ -1,6 +1,10 @@
 #!/usr/bin/python3
-""" Console Module """
+"""
+    Console Module
+"""
+
 import cmd
+import shlex
 import sys
 import uuid
 from datetime import datetime
@@ -15,34 +19,48 @@ from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
-    """ Contains the functionality for the HBNB console"""
+    """
+        Contains the functionality for the HBNB console
+    """
 
     # determines prompt for interactive/non-interactive modes
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
 
     classes = {
-        'BaseModel': BaseModel, 'User': User, 'Place': Place,
-        'State': State, 'City': City, 'Amenity': Amenity,
+        'BaseModel': BaseModel,
+        'User': User,
+        'Place': Place,
+        'State': State,
+        'City': City,
+        'Amenity': Amenity,
         'Review': Review
     }
     dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
     types = {
-        'number_rooms': int, 'number_bathrooms': int,
-        'max_guest': int, 'price_by_night': int,
-        'latitude': float, 'longitude': float
+        'number_rooms': int,
+        'number_bathrooms': int,
+        'max_guest': int,
+        'price_by_night': int,
+        'latitude': float,
+        'longitude': float
     }
 
     def preloop(self):
-        """Prints if isatty is false"""
+        """
+            Prints if isatty is false
+        """
+
         if not sys.__stdin__.isatty():
             print('(hbnb)')
 
     def precmd(self, line):
-        """Reformat command line for advanced command syntax.
-
-        Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
-        (Brackets denote optional fields in usage example.)
         """
+            Reformat command line for advanced command syntax.
+
+            Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
+            (Brackets denote optional fields in usage example.)
+        """
+
         _cmd = _cls = _id = _args = ''  # initialize line elements
 
         # scan for general formating - i.e '.', '(', ')'
@@ -89,30 +107,48 @@ class HBNBCommand(cmd.Cmd):
             return line
 
     def postcmd(self, stop, line):
-        """Prints if isatty is false"""
+        """
+            Prints if isatty is false
+        """
+
         if not sys.__stdin__.isatty():
             print('(hbnb) ', end='')
         return stop
 
     def do_quit(self, command):
-        """ Method to exit the HBNB console"""
+        """
+            Method to exit the HBNB console
+        """
+
         exit()
 
     def help_quit(self):
-        """ Prints the help documentation for quit  """
+        """
+            Prints the help documentation for quit
+        """
+
         print("Exits the program with formatting\n")
 
     def do_EOF(self, arg):
-        """ Handles EOF to exit program """
+        """
+            Handles EOF to exit program
+        """
+
         print()
         exit()
 
     def help_EOF(self):
-        """ Prints the help documentation for EOF """
+        """
+            Prints the help documentation for EOF
+        """
+
         print("Exits the program without formatting\n")
 
     def emptyline(self):
-        """ Overrides the emptyline method of CMD """
+        """
+            Overrides the emptyline method of CMD
+        """
+
         pass
 
     def do_create(self, args):
@@ -176,7 +212,8 @@ class HBNBCommand(cmd.Cmd):
     def help_create(self):
         """ Help information for the create method """
         print("Creates a class of any type")
-        print("[Usage]: create <className>\n")
+        print("[Usage]: create <className> <param 1> <param 2> <param 3> ...")
+        print("Param Synthax: <key name>=<value>\n")
 
     def do_show(self, args):
         """ Method to show an individual object """
