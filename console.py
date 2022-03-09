@@ -161,7 +161,6 @@ class HBNBCommand(cmd.Cmd):
                     except ValueError:
                         continue
                 kwargs.update({key: value})
-                print('Args ----- \n', kwargs)
             kwargs.update({
                 'id': str(uuid.uuid4()),
                 'updated_at': datetime.now().isoformat(),
@@ -169,6 +168,7 @@ class HBNBCommand(cmd.Cmd):
                 '__class__': _class.__name__
             })
             new_instance = _class(**kwargs)
+            storage.new(new_instance)
         storage.save()
         print(new_instance.id)
         storage.save()

@@ -11,16 +11,18 @@ from models import storage
 
 HBNB_TYPE_STORAGE = os.environ.get('HBNB_TYPE_STORAGE')
 
+
 @contextmanager
 def redirect_streams():
     '''Redirects stdout and stderr streams'''
+    output_stream, error_stream = StringIO(), StringIO()
+    stdout, stderr = sys.stdout, sys.stderr
+    sys.stdout, sys.stderr = output_stream, error_stream
     try:
-        output_stream, error_stream = StringIO(), stringIO()
-        std_out, std_err = sys.std_out, sys.std_err
-        sys.std_out, sys.std_err = output_stream, error_stream
         yield output_stream, error_stream
     finally:
-        sys.std_out, sys.std_err = std_out, std_err
+        sys.stdout, sys.stderr = stdout, stderr
+
 
 def empty_dictionary(dictionary):
     '''removes every key/value from dictionary.'''
@@ -29,13 +31,13 @@ def empty_dictionary(dictionary):
         del dictionary[key]
 
 
-@unittest.skipif(HBNB_TYPE_STORAGE == 'db', 'storage is not file')
+@unittest.skipIf(HBNB_TYPE_STORAGE == 'db', 'storage is not file')
 class TestHBNBCommandCreate(unittest.TestCase):
     '''Tests console create <class> <key1=value1> <key2=value2> ...'''
     @classmethod
     def setUpClass(cls):
         cls.console = HBNBCommand()
-    
+
     def setUp(self):
         self.console = TestHBNBCommandCreate.console
 
@@ -67,7 +69,8 @@ class TestHBNBCommandCreate(unittest.TestCase):
             for obj in storage.all().values():
                 obj_id = obj.id
             printed_id = output_stream.getvalue()
-            self.assertEqual(printed_id, obj_id)
+            printed_id = printed_id.strip('\n')
+            self.assertTrue(printed_id == obj_id)
 
     def test_create_no_parameter(self):
         '''Test create with no parameter just class.'''
@@ -81,7 +84,7 @@ class TestHBNBCommandCreate(unittest.TestCase):
         obj = None
         for v in storage.all().values():
             obj = v
-        self.assertEqual(obj.name '')
+        self.assertEqual(obj.name, '')
 
     def test_create_bad_parameter_value_empty(self):
         '''Test for empty value.
@@ -112,7 +115,7 @@ class TestHBNBCommandCreate(unittest.TestCase):
         self.assertEqual(place.name, '')
         self.assertEqual(place.number_rooms, 0)
         self.assertEqual(place.latitude, 0.0)
-        self.assertEqual(place.city, '0001')
+        self.assertEqual(place.city_id, '0001')
         self.assertEqual(place.number_bathrooms, 2)
         self.assertEqual(place.max_guest, 10)
         self.assertEqual(place.price_by_night, 300)
