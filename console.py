@@ -115,13 +115,51 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
+        c_name = ''
+        _class = None
+        params = []
+        kwargs = {}
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        # get class name
+        args = args.partition(' ')
+        c_name = args[0]
+        if c_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
+        _class = HBNBCommand.classes[c_name]
+        # if no parameters create instance with none
+        if not args[2]:
+            new_instance = _class()
+        else:
+            # parse parameters
+            params = args[2].split(' ')  # ['param1', param2, ...]
+            for param in params:
+                key, delim, value = param.partition('=')
+                if not hasattr(_class, key) or not value:
+                    continue
+                if value[0] == '"' and value[-1] == '"':  # is string
+                    if type(_class__dict__[key]) is not str:
+                        continue
+                    value = value.strip('"').replace('_', ' ')
+                    value = value.replace('"', '\"')
+                elif '.' in value:  # value is a float
+                    if type(_class__dict__[key]) is not float:
+                        continue
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        continue
+                else:  # value is an int
+                    if type(_class__dict__[key]) is not int:
+                        continue
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        continue
+                kwargs.update({key: value})
+            new_instance = _class(kwargs)
         storage.save()
         print(new_instance.id)
         storage.save()
