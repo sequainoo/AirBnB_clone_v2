@@ -7,7 +7,10 @@ from models.city import City
 from models import storage
 import os
 
+HBNB_TYPE_STORAGE = os.environ.get('HBNB_TYPE_STORAGE')
 
+
+@unittest.skipIf(HBNB_TYPE_STORAGE == 'db', 'storage is not file')
 class test_fileStorage(unittest.TestCase):
     """ Class to test the file storage method """
 
@@ -23,7 +26,7 @@ class test_fileStorage(unittest.TestCase):
         """ Remove storage file at end of tests """
         try:
             os.remove('file.json')
-        except:
+        except FileNotFoundError:
             pass
 
     def test_obj_list_empty(self):
@@ -125,7 +128,7 @@ class test_fileStorage(unittest.TestCase):
         city = City()
         city2 = City()
 
-        #bases
+        # bases
         bases = storage.all(BaseModel)
         self.assertEqual(len(bases), 1)
         for base in bases.values():
