@@ -107,3 +107,11 @@ class test_fileStorage(unittest.TestCase):
         from models.engine.file_storage import FileStorage
         print(type(storage))
         self.assertEqual(type(storage), FileStorage)
+
+    def test_storage_delete(self):
+        '''FileStorage engine deletes object from engine'''
+        obj = BaseModel()
+        len_1 = len(storage.all())
+        storage.delete(obj)
+        len_2 = len(storage.all())
+        self.assertTrue(len_1 == 1 and len_2 == 0)
