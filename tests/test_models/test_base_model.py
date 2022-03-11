@@ -7,6 +7,8 @@ from uuid import UUID
 import json
 import os
 
+STORAGE_TYPE = os.getenv('HBNB_TYPE_STORAGE')
+
 
 class test_basemodel(unittest.TestCase):
     """ """
@@ -47,6 +49,7 @@ class test_basemodel(unittest.TestCase):
         with self.assertRaises(TypeError):
             new = BaseModel(**copy)
 
+    @unittest.skipIf(STORAGE_TYPE == 'db', 'Storage is not file storage')
     def test_save(self):
         """ Testing save """
         i = self.value()

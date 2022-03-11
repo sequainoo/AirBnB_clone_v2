@@ -7,7 +7,10 @@ from models.city import City
 from models import storage
 import os
 
+STORAGE_TYPE = os.environ.get('HBNB_TYPE_STORAGE')
 
+
+@unittest.skipIf(STORAGE_TYPE == 'db', 'storage is not file')
 class test_fileStorage(unittest.TestCase):
     """ Class to test the file storage method """
 
@@ -23,7 +26,7 @@ class test_fileStorage(unittest.TestCase):
         """ Remove storage file at end of tests """
         try:
             os.remove('file.json')
-        except:
+        except FileNotFoundError:
             pass
 
     def test_obj_list_empty(self):
@@ -32,7 +35,8 @@ class test_fileStorage(unittest.TestCase):
 
     def test_new(self):
         """ New object is correctly added to __objects """
-        new = BaseModel()
+        BaseModel().save()
+        temp = None
         for obj in storage.all().values():
             temp = obj
         self.assertTrue(temp is obj)
@@ -65,8 +69,10 @@ class test_fileStorage(unittest.TestCase):
     def test_reload(self):
         """ Storage file is successfully loaded to __objects """
         new = BaseModel()
+        new.save()
         storage.save()
         storage.reload()
+        loaded = None
         for obj in storage.all().values():
             loaded = obj
         self.assertEqual(new.to_dict()['id'], loaded.to_dict()['id'])
@@ -99,7 +105,9 @@ class test_fileStorage(unittest.TestCase):
     def test_key_format(self):
         """ Key is properly formatted """
         new = BaseModel()
+        new.save()
         _id = new.to_dict()['id']
+        temp = None
         for key in storage.all().keys():
             temp = key
         self.assertEqual(temp, 'BaseModel' + '.' + _id)
@@ -113,6 +121,7 @@ class test_fileStorage(unittest.TestCase):
     def test_storage_delete(self):
         '''FileStorage engine deletes object from engine'''
         obj = BaseModel()
+        obj.save()
         len_1 = len(storage.all())
         storage.delete(obj)
         len_2 = len(storage.all())
@@ -120,12 +129,12 @@ class test_fileStorage(unittest.TestCase):
 
     def test_storage_all_with_class(self):
         '''FileStorage all method filters by class'''
-        base = BaseModel()
-        state = State()
-        city = City()
-        city2 = City()
+        BaseModel().save()
+        State().save()
+        City().save()
+        City().save()
 
-        #bases
+        # bases
         bases = storage.all(BaseModel)
         self.assertEqual(len(bases), 1)
         for base in bases.values():

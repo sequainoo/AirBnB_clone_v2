@@ -13,6 +13,7 @@ class test_Place(test_basemodel):
         self.name = "Place"
         self.value = Place
 
+    # @unittest.skipIf(STORAGE_TYPE == 'db', 'file storage test')
     def test_city_id(self):
         """ """
         new = self.value()
