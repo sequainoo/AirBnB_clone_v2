@@ -20,6 +20,7 @@ from models.review import Review
 
 STORAGE_TYPE = os.getenv('HBNB_TYPE_STORAGE')
 
+
 class HBNBCommand(cmd.Cmd):
     """
         Contains the functionality for the HBNB console
@@ -208,7 +209,6 @@ class HBNBCommand(cmd.Cmd):
                 'created_at': datetime.now().isoformat(),
                 '__class__': _class.__name__
             })
-            print('a=============', kwargs)
             new_instance = _class(**kwargs)
             storage.new(new_instance)
         storage.save()

@@ -30,7 +30,7 @@ class DBStorage:
         # 'Place': Place,
         # 'Review': Review,
         'State': State,
-        # 'User': User
+        'User': User
     }
 
     def __init__(self):
