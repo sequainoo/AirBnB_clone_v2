@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 '''DBStorage engine.'''
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
+from models import base_model, amenity, city, place, review, state, user
 
 HBNB_ENV = os.getenv('HBNB_ENV')
 HBNB_MYSQL_USER = os.getenv('HBNB_MYSQL_USER')
@@ -16,6 +17,15 @@ class DBStorage:
     __engine = None
     __session = None
 
+    __CLASSES = {
+        'Amenity': amenity.Amenity,
+        'City': city.City,
+        'Place': place.Place,
+        'Review': review.Review,
+        'State': state.State,
+        'User': user.User
+    }
+
     def __init__(self):
         ''' '''
         conn_str = 'mysql+mysqldb://{}:{}@{}/{}'.format(
@@ -26,30 +36,23 @@ class DBStorage:
         )
         self.__engine = create_engine(conn_str, pool_pre_ping=True)
         if HBNB_ENV == 'test':
-            DBStorage.drop_all_tables()
+            Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         '''Gets all objects filtered depending on cls'''
+        dictionary = {}
+        results_list = []
         if cls:
-            dictionary = {}
-
-
-    @staticmethod
-    def drop_all_tables():
-        ''' Drops all tables if it is a test env'''
-        from MySQLdb import connect
-        conn = connect(
-            user=HBNB_MYSQL_USER,
-            passwd=HBNB_MYSQL_PWD,
-            host=HBNB_MYSQL_HOST,
-            port=3306,
-            db=HBNB_MYSQL_DB
-        )
-        cursor = conn.cursor()
-        cursor.execute(
-            'DROP DATABASE IF EXISTS %s; CREATE DATABASE IF NOT EXISTS %s;',
-            (HBNB_MYSQL_DB, HBNB_MYSQL_DB)
-        )
-        cursor.execute('COMMIT;')
-        cursor.close()
-        conn.close()
+            cls = DBStorage.__CLASSES[cls]
+            query_result = self.__session.query(cls).all()
+            results_list.append(query_result)
+        else:
+            for cls in DBStorage.__CLASSES.values():
+                query_result = self.__session.query(cls).all()
+                results_list.append(query_result)
+        for query_result in results_list:
+            for obj in query_result:
+                dictionary.update({
+                    obj.__class__.__name__ + '.' + obj.id: obj
+                })
+        return dictionary
