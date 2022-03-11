@@ -7,9 +7,10 @@ import cmd
 import shlex
 import sys
 import uuid
+import os
 from datetime import datetime
 from models.base_model import BaseModel
-from models.__init__ import storage
+from models import storage
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -17,6 +18,7 @@ from models.city import City
 from models.amenity import Amenity
 from models.review import Review
 
+STORAGE_TYPE = os.getenv('HBNB_TYPE_STORAGE')
 
 class HBNBCommand(cmd.Cmd):
     """
@@ -178,20 +180,23 @@ class HBNBCommand(cmd.Cmd):
                 if not hasattr(_class, key) or not value:
                     continue
                 if value[0] == '"' and value[-1] == '"':  # is string
-                    if type(_class.__dict__[key]) is not str:
-                        continue
+                    if os.getenv('HBNB_TYPE_STORAGE') != 'db':
+                        if type(_class.__dict__[key]) is not str:
+                            continue
                     value = value.strip('"').replace('_', ' ')
                     value = value.replace('"', '\"')
                 elif '.' in value:  # value is a float
-                    if type(_class.__dict__[key]) is not float:
-                        continue
+                    if os.getenv('HBNB_TYPE_STORAGE') != 'db':
+                        if type(_class.__dict__[key]) is not float:
+                            continue
                     try:
                         value = float(value)
                     except ValueError:
                         continue
                 else:  # value is an int
-                    if type(_class.__dict__[key]) is not int:
-                        continue
+                    if os.getenv('HBNB_TYPE_STORAGE') != 'db':
+                        if type(_class.__dict__[key]) is not int:
+                            continue
                     try:
                         value = int(value)
                     except ValueError:
@@ -203,6 +208,7 @@ class HBNBCommand(cmd.Cmd):
                 'created_at': datetime.now().isoformat(),
                 '__class__': _class.__name__
             })
+            print('a=============', kwargs)
             new_instance = _class(**kwargs)
             storage.new(new_instance)
         storage.save()
@@ -290,13 +296,16 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
+            if STORAGE_TYPE == 'db':
+                for v in storage.all(args).values():
                     print_list.append(str(v))
+            else:
+                for k, v in storage.all().items():
+                    if k.split('.')[0] == args:
+                        print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            for v in storage.all().values():
                 print_list.append(str(v))
-
         print(print_list)
 
     def help_all(self):

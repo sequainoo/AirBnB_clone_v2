@@ -3,7 +3,13 @@
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from models import base_model, amenity, city, place, review, state, user
+from models import base_model
+from models.user import User
+from models.state import State
+from models.review import Review
+from models.place import Place
+from models.city import City
+from models.amenity import Amenity
 from models.base_model import Base
 
 HBNB_ENV = os.getenv('HBNB_ENV')
@@ -19,12 +25,12 @@ class DBStorage:
     __session = None
 
     __CLASSES = {
-        'Amenity': amenity.Amenity,
-        'City': city.City,
-        'Place': place.Place,
-        'Review': review.Review,
-        'State': state.State,
-        'User': user.User
+        # 'Amenity': Amenity,
+        'City': City,
+        # 'Place': Place,
+        # 'Review': Review,
+        'State': State,
+        # 'User': User
     }
 
     def __init__(self):
@@ -50,6 +56,7 @@ class DBStorage:
         else:
             for cls in DBStorage.__CLASSES.values():
                 query_result = self.__session.query(cls).all()
+                print(query_result)
                 results_list.append(query_result)
         for query_result in results_list:
             for obj in query_result:
@@ -80,4 +87,4 @@ class DBStorage:
             bind=self.__engine,
             expire_on_commit=False
         )
-        self.__engine = scoped_session(session_factory)
+        self.__session = scoped_session(session_factory)
