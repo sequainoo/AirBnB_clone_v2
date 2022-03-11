@@ -27,7 +27,7 @@ class DBStorage:
     __CLASSES = {
         # 'Amenity': Amenity,
         'City': City,
-        # 'Place': Place,
+        'Place': Place,
         # 'Review': Review,
         'State': State,
         'User': User
