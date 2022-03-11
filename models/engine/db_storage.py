@@ -4,6 +4,7 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models import base_model, amenity, city, place, review, state, user
+from models.base_model import Base
 
 HBNB_ENV = os.getenv('HBNB_ENV')
 HBNB_MYSQL_USER = os.getenv('HBNB_MYSQL_USER')
@@ -56,3 +57,27 @@ class DBStorage:
                     obj.__class__.__name__ + '.' + obj.id: obj
                 })
         return dictionary
+
+    def new(self, obj):
+        '''add the obj to the current session'''
+        self.__session.add(obj)
+
+    def save(self):
+        '''Commits chaanges in the current database session'''
+        self.__session.commit()
+
+    def delete(self, obj=None):
+        '''Deletes the obj from the current database session'''
+        if obj:
+            self.__session.delete(obj)
+            self.save()
+
+    def reload(self):
+        ''' '''
+        # create all tables in db
+        Base.metadata.create_all(self.__engine)
+        session_factory = sessionmaker(
+            bind=self.__engine,
+            expire_on_commit=False
+        )
+        self.__engine = scoped_session(session_factory)
