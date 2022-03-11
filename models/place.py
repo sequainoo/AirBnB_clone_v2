@@ -24,6 +24,11 @@ class Place(BaseModel, Base):
         latitude = Column(Float)
         longitude = Column(Float)
         city = relationship('City', back_populates='places')
+        reviews = relationship(
+            'Review',
+            cascade='all, delete, delete-orphan',
+            back_populates='place'
+        )
     else:
         city_id = ""
         user_id = ""
@@ -36,3 +41,15 @@ class Place(BaseModel, Base):
         latitude = 0.0
         longitude = 0.0
         amenity_ids = []
+
+        @property
+        def reviews(self):
+            '''Gets all related reviews for the place'''
+            from models.review import Review
+            from models import storage
+
+            reviews = []
+            for review in storage.all(Review).values():
+                if review.place_id == self.id:
+                    reviews.append(review)
+            return reviews
