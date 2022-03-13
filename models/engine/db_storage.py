@@ -25,7 +25,7 @@ class DBStorage:
     __session = None
 
     __CLASSES = {
-        # 'Amenity': Amenity,
+        'Amenity': Amenity,
         'City': City,
         'Place': Place,
         'Review': Review,
