@@ -5,8 +5,7 @@ Fabric script method:
 """
 from fabric.api import env, put, run
 import os.path
-env.hosts = ['35.231.101.148', ' 3.236.59.25']
-env.user = 'ubuntu'
+env.hosts = ['ubuntu@web-01.onewazato.tech', 'ubuntu@web-02.onewazato.tech']
 
 
 def do_deploy(archive_path):
