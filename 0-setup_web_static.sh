@@ -7,7 +7,7 @@ sudo apt-get -y upgrade
 sudo apt-get -y install nginx
 
 # setup dir /data/ if not exist
-sudo mkdir -p /data/web_static/releases/test/ /data/web_static/shared
+sudo mkdir -p /data/web_static/releases/test /data/web_static/shared
 
 # a fake html file in test
 echo 'Fake html doc content' | sudo tee /data/web_static/releases/test/index.html

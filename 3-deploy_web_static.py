@@ -4,6 +4,7 @@
 from fabric.api import local
 from time import strftime
 import os.path
+
 env.hosts = ['ubuntu@web-01.onewazato.tech', 'ubuntu@web-02.onewazato.tech']
 
 
