@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 '''generartes a .tgz archive from the contents of web_static'''
 
-from fabric.api import local
+from fabric.api import local, env, put, run
 from time import strftime
 import os.path
 
