@@ -34,4 +34,3 @@ sudo sed -i "/server_name _/a$CONFIG" /etc/nginx/sites-available/default
 
 # restart nginx after config
 sudo service nginx restart
-
