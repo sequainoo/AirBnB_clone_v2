@@ -2,6 +2,8 @@
 # script sets up a web server for deployement of web_static
 
 # install nginx
+sudo apt-get update
+sudo apt-get -y upgrade
 sudo apt-get -y install nginx
 
 # setup dir /data/ if not exist
