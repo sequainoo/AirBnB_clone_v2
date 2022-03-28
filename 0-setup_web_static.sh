@@ -10,7 +10,7 @@ sudo apt-get -y install nginx
 sudo mkdir -p /data/web_static/releases/test/ /data/web_static/shared
 
 # a fake html file in test
-echo 'Fake html doc content' | sudo tee /data/web_static/releases/test/index.html
+echo 'fake content' | sudo tee /data/web_static/releases/test/index.html
 
 # create a symbolic link to /test/
 sudo ln -sf /data/web_static/releases/test /data/web_static/current
