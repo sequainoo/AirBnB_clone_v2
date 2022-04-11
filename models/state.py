@@ -19,7 +19,8 @@ class State(BaseModel, Base):
                               cascade='all, delete, delete-orphan')
     else:
         name = ''
-
+        
+        @property
         def cities(self):
             '''Gets all cities related to the state'''
             from models import storage

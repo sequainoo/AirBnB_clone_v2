@@ -79,6 +79,10 @@ class DBStorage:
             self.__session.delete(obj)
             self.save()
 
+    def close(self):
+        '''close session'''
+        self.__session.close()
+
     def reload(self):
         ''' '''
         # create all tables in db
